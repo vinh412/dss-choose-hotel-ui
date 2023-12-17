@@ -1,4 +1,4 @@
-import { Box, Button, Input } from '@mui/material'
+import { Box, Button, Input, TextField } from '@mui/material'
 import React from 'react'
 import { ReactBingmaps } from 'react-bingmaps'
 
@@ -49,10 +49,10 @@ function Map({setLocation}) {
     }
 
     return (
-        <Box display='flex' flexDirection='column' height='100%'>
-            <Box component='form' onSubmit={handleSubmit}>
-                <Input onChange={(event) => setSearchInput(event.target.value)} value={searchInput} placeholder='Location' />
-                <Button type='submit'>Submit</Button>
+        <Box display='flex' flexDirection='column' height='100%' bgcolor='white'>
+            <Box component='form' onSubmit={handleSubmit} p='4px' display='flex' columnGap='8px'>
+                <TextField size='small' onChange={(event) => setSearchInput(event.target.value)} value={searchInput} placeholder='Location'/>
+                <Button type='submit' variant='contained'>Submit</Button>
             </Box>
             <Box sx={{ width: '100%', height: '100%' }}>
                 <ReactBingmaps

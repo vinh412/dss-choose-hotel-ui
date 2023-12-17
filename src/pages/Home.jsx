@@ -5,11 +5,13 @@ import Map from "../components/Map";
 import HotelList from "../components/HotelList";
 
 function Home() {
+  const [hotelList, setHotelList] = React.useState({});
+
   return (
-    <Container maxWidth='lg' sx={{marginTop: '16px'}}>
+    <Container maxWidth="lg" sx={{ marginTop: "16px" }}>
       <Box display="flex" flexDirection="row">
-        <FilterSearch />
-        <HotelList />
+        <FilterSearch setHotelList={setHotelList} />
+        {hotelList.hotels && <HotelList hotelList={hotelList.hotels} />}
       </Box>
     </Container>
   );

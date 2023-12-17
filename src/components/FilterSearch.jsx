@@ -6,12 +6,14 @@ import {
   Divider,
   Typography,
   Rating,
+  Link,
 } from "@mui/material";
 import * as React from "react";
 import Map from "./Map";
 import CheckboxGroup2 from "./CheckboxGroup2";
 import NumberInput from "./NumberInput";
 import { numberWithDot } from "../ultis/helper";
+import SeeAllCheckbox from "./SeeAllCheckbox";
 
 const minPrice = 0;
 const maxPrice = 66000000;
@@ -19,23 +21,24 @@ const minDistance = 0;
 const stepPrice = 10;
 
 const priceText = (price) => {
-    return `${numberWithDot(price)}đ`;
+  return `${numberWithDot(price)}đ`;
 };
 
-function FilterSearch() {
+function FilterSearch({ setHotelList }) {
   const [metadata, setMetadata] = React.useState(null);
   const [bedTypes, setBedTypes] = React.useState({});
   const [userChoice, setUserChoice] = React.useState({
     roomServices: [],
     hotelServices: [],
     roomFacilities: [],
-    roomViews: [],
+    roomView: [],
   });
   const [location, setLocation] = React.useState({});
   const [price, setPrice] = React.useState([minPrice, maxPrice]);
   const [score, setScore] = React.useState(3);
 
   const [open, setOpen] = React.useState(false);
+  const [openSeeMore, setOpenSeeMore] = React.useState(false);
 
   const handleChangeSlider = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -52,13 +55,27 @@ function FilterSearch() {
   React.useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/metadata")
       .then((response) => response.json())
+      .then((response) => {
+        let notSame = response.hotelServices.filter((service) => {
+          let isSame = false;
+          response.roomFacilities.forEach((facility) => {
+            if (service.name === facility.name && service.id === facility.id)
+              isSame = true;
+          });
+          return !isSame;
+        });
+        response.hotelServices = notSame;
+        console.log(notSame);
+        return response;
+      })
       .then((response) => setMetadata(response))
       .catch((error) => console.log(error));
   }, []);
 
   const handleChangeCheckBox = (event) => {
     const { value, checked, name } = event.target;
-    const { roomServices, hotelServices, roomViews, roomFacilities } = userChoice;
+    const { roomServices, hotelServices, roomView, roomFacilities } =
+      userChoice;
 
     if (name === "roomServices") {
       if (checked) {
@@ -66,14 +83,14 @@ function FilterSearch() {
           roomServices: [...roomServices, parseInt(value)],
           hotelServices,
           roomFacilities,
-          roomViews,
+          roomView,
         });
       } else {
         setUserChoice({
           roomServices: roomServices.filter((e) => e !== parseInt(value)),
           hotelServices,
           roomFacilities,
-          roomViews,
+          roomView,
         });
       }
     } else if (name === "hotelServices") {
@@ -82,14 +99,14 @@ function FilterSearch() {
           roomServices,
           hotelServices: [...hotelServices, parseInt(value)],
           roomFacilities,
-          roomViews,
+          roomView,
         });
       } else {
         setUserChoice({
           roomServices,
           hotelServices: hotelServices.filter((e) => e !== parseInt(value)),
           roomFacilities,
-          roomViews,
+          roomView,
         });
       }
     } else if (name === "roomFacilities") {
@@ -98,30 +115,30 @@ function FilterSearch() {
           roomServices,
           hotelServices,
           roomFacilities: [...roomFacilities, parseInt(value)],
-          roomViews,
+          roomView,
         });
       } else {
         setUserChoice({
           roomServices,
           hotelServices,
           roomFacilities: roomFacilities.filter((e) => e !== parseInt(value)),
-          roomViews,
+          roomView,
         });
       }
-    } else if (name === "roomViews") {
+    } else if (name === "roomView") {
       if (checked) {
         setUserChoice({
           roomServices,
           hotelServices,
           roomFacilities,
-          roomViews: [...roomViews, value],
+          roomView: [...roomView, value],
         });
       } else {
         setUserChoice({
           roomServices,
           hotelServices,
           roomFacilities,
-          roomViews: roomViews.filter((e) => e !== value),
+          roomView: roomView.filter((e) => e !== value),
         });
       }
     }
@@ -150,12 +167,21 @@ function FilterSearch() {
       priceEnd: price[1],
       ...userChoice,
       beds: bedTypes,
-      score: score,
+      star: score,
+      roomView: userChoice.roomView.toString(),
     };
-    console.log(requestBody);
+
+    console.log(JSON.stringify(requestBody));
+    fetch("http://127.0.0.1:8000/api/v1/query", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => response.json())
+      .then((response) => setHotelList(response));
   };
   return (
-    <Box sx={{ width: "25%", p: '0px 16px'}} >
+    <Box sx={{ width: "25%", p: "0px 16px" }}>
       <Box sx={{ cursor: "pointer" }} onClick={() => setOpen(true)}>
         <img src="https://cdn6.agoda.net/images/MAPS-1214/default/property-map-entry-1.svg" />
       </Box>
@@ -189,7 +215,7 @@ function FilterSearch() {
           valueLabelFormat={priceText}
           disableSwap
         />
-        <Box display='flex' flexDirection='row' justifyContent='space-between'>
+        <Box display="flex" flexDirection="row" justifyContent="space-between">
           <Typography fontSize={12}>{`${numberWithDot(price[0])}đ`}</Typography>
           <Typography fontSize={12}>{`${numberWithDot(price[1])}đ`}</Typography>
         </Box>
@@ -197,7 +223,18 @@ function FilterSearch() {
 
       {metadata !== null && (
         <form onSubmit={handleSubmit}>
-          <Box>
+          <Box display="flex" flexDirection="column" rowGap="8px">
+            <Box>
+              <Divider orientation="horizontal" />
+              <Typography>Rating</Typography>
+              <Rating
+                value={score}
+                precision={0.5}
+                onChange={(event, newScore) => {
+                  setScore(newScore);
+                }}
+              />
+            </Box>
             <CheckboxGroup2
               name="roomServices"
               title="Room Services"
@@ -217,7 +254,7 @@ function FilterSearch() {
               onChange={handleChangeCheckBox}
             />
             <CheckboxGroup2
-              name="roomViews"
+              name="roomView"
               title="Room Views"
               array={metadata.roomViews}
               onChange={handleChangeCheckBox}
@@ -228,21 +265,30 @@ function FilterSearch() {
               array={metadata.bedTypes}
               onChange={handleChoiceBedTypes}
             />
-            <Box>
-              <Divider orientation="horizontal" />
-              <Typography>Rating</Typography>
-              <Rating
-                value={score}
-                precision={0.5}
-                onChange={(event, newScore) => {
-                  setScore(newScore);
+            <Link onClick={() => setOpenSeeMore(true)} variant="body2" sx={{ cursor: "pointer" }}>
+              See more
+            </Link>
+            <Modal open={openSeeMore} onClose={() => setOpenSeeMore(false)}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "800px",
+                  height: "600px",
+                  bgcolor: "white",
+                  overflow: 'auto',
+                  borderRadius: '8px',
                 }}
-              />
-            </Box>
+              >
+                <SeeAllCheckbox metadata={metadata} onChange={handleChangeCheckBox}/>
+              </Box>
+            </Modal>
+            <Button type="submit" variant="contained" size="small">
+              Submit
+            </Button>
           </Box>
-          <Button type="submit" variant="contained" size="small">
-            Submit
-          </Button>
         </form>
       )}
     </Box>
