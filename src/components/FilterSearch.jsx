@@ -8,7 +8,6 @@ import {
   Rating,
 } from "@mui/material";
 import * as React from "react";
-import CheckboxGroup from "./CheckboxGroup";
 import Map from "./Map";
 import CheckboxGroup2 from "./CheckboxGroup2";
 import NumberInput from "./NumberInput";
@@ -29,6 +28,7 @@ function FilterSearch() {
   const [userChoice, setUserChoice] = React.useState({
     roomServices: [],
     hotelServices: [],
+    roomFacilities: [],
     roomViews: [],
   });
   const [location, setLocation] = React.useState({});
@@ -58,47 +58,69 @@ function FilterSearch() {
 
   const handleChangeCheckBox = (event) => {
     const { value, checked, name } = event.target;
-    const { roomServices, hotelServices, roomViews } = userChoice;
+    const { roomServices, hotelServices, roomViews, roomFacilities } = userChoice;
 
     if (name === "roomServices") {
       if (checked) {
         setUserChoice({
           roomServices: [...roomServices, parseInt(value)],
-          hotelServices: hotelServices,
-          roomViews: roomViews,
+          hotelServices,
+          roomFacilities,
+          roomViews,
         });
       } else {
         setUserChoice({
           roomServices: roomServices.filter((e) => e !== parseInt(value)),
-          hotelServices: hotelServices,
-          roomViews: roomViews,
+          hotelServices,
+          roomFacilities,
+          roomViews,
         });
       }
     } else if (name === "hotelServices") {
       if (checked) {
         setUserChoice({
-          roomServices: roomServices,
+          roomServices,
           hotelServices: [...hotelServices, parseInt(value)],
-          roomViews: roomViews,
+          roomFacilities,
+          roomViews,
         });
       } else {
         setUserChoice({
-          roomServices: roomServices,
+          roomServices,
           hotelServices: hotelServices.filter((e) => e !== parseInt(value)),
-          roomViews: roomViews,
+          roomFacilities,
+          roomViews,
+        });
+      }
+    } else if (name === "roomFacilities") {
+      if (checked) {
+        setUserChoice({
+          roomServices,
+          hotelServices,
+          roomFacilities: [...roomFacilities, parseInt(value)],
+          roomViews,
+        });
+      } else {
+        setUserChoice({
+          roomServices,
+          hotelServices,
+          roomFacilities: roomFacilities.filter((e) => e !== parseInt(value)),
+          roomViews,
         });
       }
     } else if (name === "roomViews") {
       if (checked) {
         setUserChoice({
-          roomServices: roomServices,
-          hotelServices: hotelServices,
+          roomServices,
+          hotelServices,
+          roomFacilities,
           roomViews: [...roomViews, value],
         });
       } else {
         setUserChoice({
-          roomServices: roomServices,
-          hotelServices: hotelServices,
+          roomServices,
+          hotelServices,
+          roomFacilities,
           roomViews: roomViews.filter((e) => e !== value),
         });
       }
@@ -186,6 +208,12 @@ function FilterSearch() {
               name="hotelServices"
               title="Hotel Services"
               array={metadata.hotelServices}
+              onChange={handleChangeCheckBox}
+            />
+            <CheckboxGroup2
+              name="roomFacilities"
+              title="Room Facilities"
+              array={metadata.roomFacilities}
               onChange={handleChangeCheckBox}
             />
             <CheckboxGroup2
