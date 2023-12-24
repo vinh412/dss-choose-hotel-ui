@@ -7,6 +7,7 @@ import {
   Typography,
   Rating,
   Link,
+  IconButton,
 } from "@mui/material";
 import * as React from "react";
 import Map from "./Map";
@@ -14,6 +15,7 @@ import CheckboxGroup2 from "./CheckboxGroup2";
 import NumberInput from "./NumberInput";
 import { numberWithDot } from "../ultis/helper";
 import SeeAllCheckbox from "./SeeAllCheckbox";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 const minPrice = 0;
 const maxPrice = 66000000;
@@ -265,26 +267,38 @@ function FilterSearch({ setHotelList }) {
               array={metadata.bedTypes}
               onChange={handleChoiceBedTypes}
             />
-            <Link onClick={() => setOpenSeeMore(true)} variant="body2" sx={{ cursor: "pointer" }}>
+            <Link
+              onClick={() => setOpenSeeMore(true)}
+              variant="body2"
+              sx={{ cursor: "pointer" }}
+            >
               See more
             </Link>
-            <Modal open={openSeeMore} onClose={() => setOpenSeeMore(false)}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "800px",
-                  height: "600px",
-                  bgcolor: "white",
-                  overflow: 'auto',
-                  borderRadius: '8px',
-                }}
-              >
-                <SeeAllCheckbox metadata={metadata} onChange={handleChangeCheckBox}/>
-              </Box>
-            </Modal>
+            <Box
+              sx={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: '100',
+                width: "800px",
+                height: "600px",
+                p: '8px',
+                bgcolor: "white",
+                overflow: "auto",
+                border: "2px solid gray",
+                borderRadius: "8px",
+              }}
+              visibility={openSeeMore ? "visible" : "hidden"}
+            >
+              <IconButton onClick={() => setOpenSeeMore(false)}>
+                <CloseRoundedIcon />
+              </IconButton>
+              <SeeAllCheckbox
+                metadata={metadata}
+                onChange={handleChangeCheckBox}
+              />
+            </Box>
             <Button type="submit" variant="contained" size="small">
               Submit
             </Button>
