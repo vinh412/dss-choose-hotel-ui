@@ -7,11 +7,11 @@ function NumberInput({ array, title, name, onChange }) {
       <Divider orientation="horizontal" />
       <Typography>{title}</Typography>
       {array.map((item) => (
-        <Box key={item} display="flex" flexDirection="row" justifyContent="space-between" paddingBottom='4px'>
-          <label style={{ fontSize: 12 }} htmlFor={item}>
-            {item}
+        <Box key={item.id + item.name} display="flex" flexDirection="row" justifyContent="space-between" paddingBottom='4px'>
+          <label style={{ fontSize: 12 }} htmlFor={item.name}>
+            {item.name}
           </label>
-          <input id={item} name={name} type="number" min={0} style={{ width: 36, fontSize: 12 }} defaultValue={0} onChange={onChange}/>
+          <input id={item.name} name={name} type="number" min={0} style={{ width: 36, fontSize: 12 }} defaultValue={0} onChange={onChange}/>
         </Box>
       ))}
     </Box>

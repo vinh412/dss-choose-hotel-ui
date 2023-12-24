@@ -38,7 +38,7 @@ function HotelCard({ hotel }) {
       <Box display="flex">
         <CardMedia
           component="img"
-          image="https://rosamiahotel.com/FileUpload/Images/mat_tien_.jpg"
+          image={hotel.image_url}
           sx={{ width: "200px" }}
         />
         <Box
@@ -57,9 +57,8 @@ function HotelCard({ hotel }) {
               </Typography>
             </Box>
             <Box display="flex" flexWrap="wrap" gap="4px" mt="8px">
-              {hotel.hotelServices && hotel.hotelServices.map((service) => (
-                <Tag content={service} />
-              ))}
+              {hotel.hotelServices &&
+                hotel.hotelServices.map((service) => <Tag content={service} />)}
             </Box>
           </CardContent>
           <Box display="flex" justifyContent="space-between" pl="16px">
@@ -79,35 +78,42 @@ function HotelCard({ hotel }) {
             <Box display="flex">
               <CardMedia
                 component="img"
-                image="https://rosamiahotel.com/FileUpload/Images/mat_tien_.jpg"
+                image={room.image_url}
                 sx={{ width: "100px" }}
               />
               <Box display="flex" justifyContent="space-between" width="100%">
                 <CardContent>
-                  <Typography>Tên Phòng</Typography>
+                  <Typography>{room.name}</Typography>
                   <Box display="flex" flexWrap="wrap" gap="4px" mt="8px">
-                    {room.facilities && room.facilities.map(facilities => (
-                      <Tag content={facilities}/>
-                    ))}
+                    {room.facilities &&
+                      room.facilities.map((facilities) => (
+                        <Tag content={facilities} />
+                      ))}
                     {room.view && <Tag content={room.view} />}
-                    {room.services && room.services.map(service => (
-                      <Tag content={service} />
-                    ))}
-                    {
-                      room.beds && Object.keys(room.beds).map(bedname => {
-                        if(room.beds[bedname] > 0)
-                            return <Tag content={bedname + " x" + room.beds[bedname]}/>
-                      })
-                    }
+                    {room.services &&
+                      room.services.map((service) => <Tag content={service} />)}
+                    {room.beds &&
+                      Object.keys(room.beds).map((bedname) => {
+                        if (room.beds[bedname] > 0)
+                          return (
+                            <Tag
+                              content={bedname + " x" + room.beds[bedname]}
+                            />
+                          );
+                      })}
                   </Box>
                 </CardContent>
                 <Box display="flex" flexDirection="column" alignSelf="center">
-                  <Typography alignSelf="center" className="strikethrough">
-                    {numberWithDot(room.before_discount_price)}$
-                  </Typography>
-                  <Typography fontSize="20px" fontWeight="bold" color="red">
-                    {numberWithDot(room.cheapest_price)}$
-                  </Typography>
+                  {room.before_discount_price && (
+                    <Typography alignSelf="center" className="strikethrough">
+                      {numberWithDot(room.before_discount_price)}$
+                    </Typography>
+                  )}
+                  {room.cheapest_price && (
+                    <Typography fontSize="20px" fontWeight="bold" color="red">
+                      {numberWithDot(room.cheapest_price)}$
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             </Box>
