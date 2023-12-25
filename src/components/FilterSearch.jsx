@@ -18,12 +18,12 @@ import SeeAllCheckbox from "./SeeAllCheckbox";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 const minPrice = 0;
-const maxPrice = 66000000;
+const maxPrice = 500;
 const minDistance = 0;
 const stepPrice = 10;
 
 const priceText = (price) => {
-  return `${numberWithDot(price)}đ`;
+  return `${numberWithDot(price)}$`;
 };
 
 function FilterSearch({ setHotelList }) {
@@ -218,8 +218,8 @@ function FilterSearch({ setHotelList }) {
           disableSwap
         />
         <Box display="flex" flexDirection="row" justifyContent="space-between">
-          <Typography fontSize={12}>{`${numberWithDot(price[0])}đ`}</Typography>
-          <Typography fontSize={12}>{`${numberWithDot(price[1])}đ`}</Typography>
+          <Typography fontSize={12}>{`${numberWithDot(price[0])}$`}</Typography>
+          <Typography fontSize={12}>{`${numberWithDot(price[1])}$`}</Typography>
         </Box>
       </Box>
 
